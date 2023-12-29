@@ -1,7 +1,9 @@
 const authReducer = (
   state = {
-    authData: null,
+    authData: JSON.parse(localStorage.getItem("userInfo")) || null,
     authError: null,
+    allUsers: [],
+    messages: [],
     loading: false,
   },
   action
@@ -12,6 +14,16 @@ const authReducer = (
 
     case "LOGIN":
       return { ...state, authData: action.data };
+
+    case "LOGOUT":
+      localStorage.clear();
+      return { ...state, authData: null };
+
+    case "GETALLUSERS":
+      return { ...state, allUsers: [...action.data] };
+
+    case "GETALLMESSAGES":
+      return { ...state, messages: [...action.data] };
 
     case "STARTLOADING":
       return { ...state, loading: true };

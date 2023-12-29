@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Notifications, { notify } from "react-notify-toast";
-import { login, register } from "../../actions/auth";
+import { login, loginWithFacebook, register } from "../../actions/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import FacebookLogin from "react-facebook-login";
+import { GoogleLogin } from "react-google-login";
+
+import { AiFillGoogleCircle } from "react-icons/ai";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -15,6 +19,37 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+
+  const handleFacebookLogin = () => {
+    window.open("http://localhost:5000/user/facebookAuth", "_self");
+  };
+
+  const responseFacebook = async (res) => {
+    console.log(res);
+  };
+
+  const googleSuccess = async (res) => {
+    const result = res?.profileObj;
+    const token = res?.tokenId;
+
+    console.log("====================================");
+    console.log(result);
+    console.log("====================================");
+
+    try {
+      // dispatch({ type: AUTH, data: { result, token } });
+      dispatch({ type: "LOGIN", data: { result, token } });
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const googleError = (error) => {
+    console.log(error);
+    console.log("Google sing in was unsuccessful. Try again later");
+  };
 
   useEffect(() => {
     if (localStorage.getItem("userInfo")) {
@@ -75,7 +110,7 @@ const LoginForm = () => {
 
         backgroundSize: "contain",
       }}
-      className="h-screen pt-20"
+      className="h-screen pt-14"
     >
       <form
         style={{
@@ -138,6 +173,48 @@ const LoginForm = () => {
         >
           Login
         </button>
+        <GoogleLogin
+          clientId="564033717568-bu2nr1l9h31bhk9bff4pqbenvvoju3oq.apps.googleusercontent.com"
+          render={(renderProps) => (
+            <button
+              style={{ width: "100%", color: "#AEBEC1", background: "#D0463B" }}
+              // className={classes.googleButton}
+              className="border relative bg-white font-bold p-2 text-slate-900 focus:border-indigo-100 shadow-md shadow-blue-500/100  outline-0 border-2 rounded-md mb-2 mt-2 w-full "
+              color="primary"
+              fullWidth
+              onClick={renderProps.onClick}
+              disabled={renderProps.disabled}
+              // startIcon={<Icon />}
+              variant="contained"
+            >
+              <span className="absolute left-8 top-1">
+                <AiFillGoogleCircle className="text-3xl" />
+              </span>
+              <span> Sign In with Google</span>
+            </button>
+          )}
+          onSuccess={googleSuccess}
+          onFailure={googleError}
+          cookiePolicy="single_host_origin"
+        />
+        {/* <FacebookLogin
+          appId="707710300713123"
+          autoLoad={true}
+          fields="name,email,picture"
+          // onClick={componentClicked}
+          callback={responseFacebook}
+          cssClass="my-facebook-button-class"
+          icon="fa-facebook"
+          // className="border bg-white font-bold p-2 text-slate-900 focus:border-indigo-100 shadow-md shadow-blue-500/100  outline-0 border-2 rounded-md mb-2 mt-2 w-full "
+          style={{ width: "100%", color: "#AEBEC1", background: "#D0463B" }}
+        /> */}
+        {/* <button
+          style={{ color: "#21475C" }}
+          onClick={handleFacebookLogin}
+          className="border bg-white font-bold p-2 text-slate-900 focus:border-indigo-100 shadow-md shadow-blue-500/100  outline-0 border-2 rounded-md mb-2 mt-8 w-full "
+        >
+          Login in with facebook
+        </button> */}
 
         <p className="text-center font-bold underline text-indigo-800 py-3">
           <Link to="/passwordreset">Forgotten password?</Link>

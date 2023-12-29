@@ -29,3 +29,23 @@ export const login = (loginFormValues) => async (dispatch) => {
     notify.show(data.msg, "error", 3000, myColor);
   }
 };
+export const loginWithFacebook = () => async (dispatch) => {
+  try {
+    await api.loginWithFacebook();
+  } catch (error) {
+    const data = error.response.data;
+  }
+};
+
+export const getAllUsers = () => async (dispatch) => {
+  try {
+    const { data } = await api.getAllUsers();
+
+    console.log(data);
+    dispatch({ type: "GETALLUSERS", data });
+  } catch (error) {
+    const data = error.response.data;
+
+    console.log(data);
+  }
+};
